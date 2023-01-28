@@ -6,27 +6,19 @@ export default async function handler(req, res) {
   const db = connection.db();
   const coll = db.collection("classes");
   const session = await getSession({ req });
+  const classid = JSON.parse(req.body).classid;
+  const classname = JSON.parse(req.body).classname;
+
   if (!session.user.admin) {
     res.json({ massage: "YOU ARE NOT ALLOWED" });
     return;
   }
-  const n = await coll.insert({
-    inrev: [],
-    accepted: [],
-    dienyed: [],
-    posts: [],
-    name: req.body,
-  });
-  const id = n.insertedIds[0];
+  const cls = await coll.findOne({ code: classid });
   await coll.replaceOne(
-    { _id: id },
+    { code: classid },
     {
-      inrev: [],
-      accepted: [],
-      dienyed: [],
-      posts: [],
-      name: req.body,
-      code: id.toString().slice(17, 24),
+      ...cls,
+      name: classname,
     }
   );
   res.json({ massage: "DONE" });

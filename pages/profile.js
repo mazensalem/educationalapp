@@ -4,6 +4,8 @@ import { useState } from "react";
 export default function profile({ classses }) {
   const { data } = useSession();
   const [code, setcode] = useState();
+  const [name, setname] = useState("");
+  const [editingname, seteditingname] = useState(false);
   if (!data) {
     return <>loading</>;
   }
@@ -11,9 +13,55 @@ export default function profile({ classses }) {
   return (
     <div>
       <div>
+        <div>
+          {editingname ? (
+            <>
+              <input
+                value={name || data.user.name}
+                onChange={(e) => setname(e.target.value)}
+              />
+              <button
+                onClick={() => {
+                  seteditingname(false);
+                }}
+              >
+                discard
+              </button>
+              <button
+                onClick={async () => {
+                  if (name) {
+                    await fetch("/api/users/changename", {
+                      method: "POST",
+                      body: name,
+                    });
+                    seteditingname(false);
+                  } else {
+                    alert("you didn't change your name");
+                  }
+                }}
+              >
+                save
+              </button>
+            </>
+          ) : (
+            <>
+              {data.user.name}{" "}
+              <button
+                onClick={() => {
+                  seteditingname(true);
+                }}
+              >
+                edit
+              </button>
+            </>
+          )}
+        </div>
         {classses.map((e) => (
           <div key={e.code}>
-            {e.name} ({e.code}) <br />
+            <a href={"/class/" + e.code}>
+              {e.name} ({e.code})
+            </a>{" "}
+            <br />
             {e.inrev.includes(data.user.id) && (
               <>
                 you are in review
