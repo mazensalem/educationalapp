@@ -9,6 +9,7 @@ export default function Class({
   posts,
   cname,
   votes,
+  tests,
 }) {
   const { data } = useSession();
   const [inputtext, setinputtext] = useState("");
@@ -21,10 +22,9 @@ export default function Class({
     return <>loading</>;
   }
 
-  if (data.user.inrev) {
+  if (inrevusers.includes(data.user.id)) {
     return <>you are still in review</>;
   }
-  // console.log(votes);
 
   return (
     <div>
@@ -129,6 +129,10 @@ export default function Class({
             >
               send
             </button>
+          </div>
+
+          <div>
+            <a href={"/exams/create?classid=" + classid}>Add exam</a>
           </div>
         </>
       )}
@@ -314,6 +318,16 @@ export default function Class({
           </div>
         )}
       </div>
+      {/* Tests */}
+      <div>
+        {tests.map((test) => (
+          <>
+            you have a{" "}
+            <a href={"/exams/" + test._id}> {test.duration} min test</a> between{" "}
+            {test.startdate} and {test.enddate}
+          </>
+        ))}
+      </div>
     </div>
   );
 }
@@ -327,10 +341,11 @@ export async function getServerSideProps(context) {
   const sclass = await rsclass.json();
   const session = await getSession({ req: context.req });
   if (
-    !session.user.admin &&
-    !sclass.sclass.inrev.includes(session.user.id) &&
-    !sclass.sclass.accepted.includes(session.user.id) &&
-    !sclass.sclass.dienyed.includes(session.user.id)
+    (!session.user.admin &&
+      !sclass.sclass.inrev.includes(session.user.id) &&
+      !sclass.sclass.accepted.includes(session.user.id) &&
+      !sclass.sclass.dienyed.includes(session.user.id)) ||
+    !sclass.sclass
   ) {
     return {
       redirect: {
@@ -394,6 +409,12 @@ export async function getServerSideProps(context) {
     }
   }
 
+  const rtests = await fetch("http://localhost:3000/api/classes/gettests", {
+    method: "POST",
+    body: rid,
+  });
+  const tests = await rtests.json();
+
   return {
     props: {
       inrevusers,
@@ -403,6 +424,7 @@ export async function getServerSideProps(context) {
       posts,
       cname: sclass.sclass.name,
       votes,
+      tests,
     },
   };
 }
