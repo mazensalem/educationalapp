@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
 
-export default function create({ classid }) {
-  const [startdate, setstartdate] = useState("");
-  const [enddate, setenddate] = useState("");
-  const [duration, setduration] = useState(0);
-  const [questions, setquestions] = useState([]);
+export default function create({ exam }) {
+  const [startdate, setstartdate] = useState(exam.startdate);
+  const [enddate, setenddate] = useState(exam.enddate);
+  const [duration, setduration] = useState(exam.duration);
+  const [questions, setquestions] = useState(exam.questions);
   const [searchtitle, setsearchtitle] = useState("");
   const [searchpoints, setsearchpoints] = useState(0);
   const [searchtags, setsearchtags] = useState(["", "", "", "", "", ""]);
   const [searchresults, setsearchresults] = useState([]);
-  const [totalpoints, settotalpoints] = useState(0);
+  const [totalpoints, settotalpoints] = useState(exam.totalpoints);
   const { data } = useSession();
   if (!data) {
     return <>loading</>;
@@ -147,7 +147,7 @@ export default function create({ classid }) {
                     if (j.passage) {
                       let t = 0;
                       for (let p of j.questions) {
-                        t += parseInt(p.points);
+                        t += p.points;
                       }
                       k += parseInt(t);
                     } else {
@@ -170,7 +170,7 @@ export default function create({ classid }) {
                         setquestions([...questions, e]);
                         let t = 0;
                         for (let p of e.questions) {
-                          t += parseInt(p.points);
+                          t += p.points;
                         }
                         settotalpoints(totalpoints + parseInt(t));
                       }
@@ -283,10 +283,10 @@ export default function create({ classid }) {
       </div>
       <button
         onClick={async () => {
-          await fetch("/api/exams/create", {
+          await fetch("/api/exams/edit", {
             method: "POST",
             body: JSON.stringify({
-              classid,
+              id: exam._id,
               questions,
               duration,
               startdate,
@@ -296,23 +296,27 @@ export default function create({ classid }) {
           });
         }}
       >
-        send
+        edit
       </button>
     </div>
   );
 }
 
 export async function getServerSideProps(context) {
-  if (!context.query.classid) {
+  if (!context.params.examid) {
     return {
       redirect: {
         destination: "/",
       },
     };
   }
+  const exam = await fetch("http://localhost:3000/api/exams/get", {
+    method: "POST",
+    body: context.params.examid,
+  });
   return {
     props: {
-      classid: context.query.classid,
+      exam: await exam.json(),
     },
   };
 }

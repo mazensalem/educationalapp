@@ -10,6 +10,7 @@ export default function Class({
   cname,
   votes,
   tests,
+  massages,
 }) {
   const { data } = useSession();
   const [inputtext, setinputtext] = useState("");
@@ -18,6 +19,7 @@ export default function Class({
   const [classname, setclassname] = useState(cname);
   const [iseditingpost, setiseditingpost] = useState(false);
   const [editingpostid, seteditingpostid] = useState("");
+  const [massage, setmassage] = useState("");
   if (!data) {
     return <>loading</>;
   }
@@ -325,9 +327,47 @@ export default function Class({
             you have a{" "}
             <a href={"/exams/" + test._id}> {test.duration} min test</a> between{" "}
             {test.startdate} and {test.enddate}
+            {data.user.admin && (
+              <>
+                <button
+                  onClick={async () => {
+                    await fetch("/api/exams/delete", {
+                      method: "POST",
+                      body: test._id,
+                    });
+                  }}
+                >
+                  delete
+                </button>
+              </>
+            )}
           </>
         ))}
       </div>
+      {/* massages */}
+      {data.user.admin ? (
+        <div>
+          {massages.map((massage) => (
+            <>
+              {massage.from} send {massage.content}
+            </>
+          ))}
+        </div>
+      ) : (
+        <>
+          <input value={massage} onChange={(e) => setmassage(e.target.value)} />
+          <button
+            onClick={async () => {
+              await fetch("/api/chat/send", {
+                method: "POST",
+                body: JSON.stringify({ massage, classid }),
+              });
+            }}
+          >
+            send
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -415,6 +455,15 @@ export async function getServerSideProps(context) {
   });
   const tests = await rtests.json();
 
+  const rmassages = await fetch(
+    "http://localhost:3000/api/classes/getmassages",
+    {
+      method: "POST",
+      body: rid,
+    }
+  );
+  const massages = await rmassages.json();
+
   return {
     props: {
       inrevusers,
@@ -425,6 +474,7 @@ export async function getServerSideProps(context) {
       cname: sclass.sclass.name,
       votes,
       tests,
+      massages,
     },
   };
 }

@@ -1,7 +1,7 @@
 import { useSession, getSession } from "next-auth/react";
 import { useState } from "react";
 
-export default function profile({ classses }) {
+export default function profile({ classses, qustions }) {
   const { data } = useSession();
   const [code, setcode] = useState();
   const [name, setname] = useState("");
@@ -99,6 +99,47 @@ export default function profile({ classses }) {
           </div>
         ))}
       </div>
+
+      <div>
+        {data.user.admin && (
+          <>
+            {qustions.map((question) => (
+              <>
+                {question.passage ? (
+                  <div>
+                    {question.data}{" "}
+                    <button
+                      onClick={async () => {
+                        await fetch("/api/questions/delete", {
+                          method: "POST",
+                          body: question._id,
+                        });
+                      }}
+                    >
+                      delete
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    {question.title}{" "}
+                    <button
+                      onClick={async () => {
+                        await fetch("/api/questions/delete", {
+                          method: "POST",
+                          body: question._id,
+                        });
+                      }}
+                    >
+                      delete
+                    </button>
+                  </div>
+                )}
+              </>
+            ))}
+          </>
+        )}
+      </div>
+
       <div>
         <input
           value={code}
@@ -128,9 +169,12 @@ export async function getServerSideProps(context) {
     method: "POST",
   });
   const classses = await rclasses.json();
+  const rquestions = await fetch("http://localhost:3000/api/questions/getall");
+  const qustions = await rquestions.json();
   return {
     props: {
       classses: classses.classes,
+      qustions,
     },
   };
 }

@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     return;
   }
   let d = [];
+  // tags[5] == checkbox in the client page
   if (tags[5]) {
     const da = await coll.find({ passage: true }).toArray();
     for (let i = 0; i < da.length; i++) {
@@ -60,5 +61,5 @@ export default async function handler(req, res) {
       }
     }
   }
-  res.json(d);
+  await res.json(d);
 }
