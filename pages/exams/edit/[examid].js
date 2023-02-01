@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function create({ exam }) {
   const [startdate, setstartdate] = useState(exam.startdate);
@@ -13,6 +14,7 @@ export default function create({ exam }) {
   const [searchresults, setsearchresults] = useState([]);
   const [totalpoints, settotalpoints] = useState(exam.totalpoints);
   const { data } = useSession();
+  const [loading, setloading] = useState(false);
   if (!data) {
     return <>loading</>;
   }
@@ -118,26 +120,34 @@ export default function create({ exam }) {
                 return setsearchtags([...ntags]);
               }}
             />
-            <button
-              onClick={async () => {
-                const rresults = await fetch("/api/questions/search", {
-                  method: "POST",
-                  body: JSON.stringify({
-                    title: searchtitle,
-                    points: searchpoints,
-                    tags: searchtags,
-                  }),
-                });
-                const results = await rresults.json();
-                setsearchresults(results);
-              }}
-            >
-              search
-            </button>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  const rresults = await fetch("/api/questions/search", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      title: searchtitle,
+                      points: searchpoints,
+                      tags: searchtags,
+                    }),
+                  });
+                  const results = await rresults.json();
+                  setsearchresults(results);
+                  setloading(false);
+                }}
+              >
+                search
+              </Button>
+            )}
           </div>
           {/* results */}
           <div>
-            <button
+            <Button
+              variant="outline-success"
               onClick={() => {
                 let r = [];
                 let k = 0;
@@ -160,11 +170,12 @@ export default function create({ exam }) {
               }}
             >
               Add All
-            </button>
+            </Button>
             {searchresults.map((e) =>
               e.passage ? (
                 <>
-                  <button
+                  <Button
+                    variant="outline-success"
                     onClick={() => {
                       if (!questions.map((a) => a._id).includes(e._id)) {
                         setquestions([...questions, e]);
@@ -177,12 +188,15 @@ export default function create({ exam }) {
                     }}
                   >
                     Add
-                  </button>
+                  </Button>
                   <div>{e.data}</div>
+                  <br />
                   {e.questions.map((question) => (
                     <div>
                       {question.title}
-                      {question.points}
+                      <br />
+                      marks: {question.points}
+                      <br />
                       {question.answers.map((e) => (
                         <span
                           style={
@@ -192,6 +206,7 @@ export default function create({ exam }) {
                           }
                         >
                           {e.text}
+                          <br />
                         </span>
                       ))}
                     </div>
@@ -200,7 +215,8 @@ export default function create({ exam }) {
               ) : (
                 <>
                   <div>
-                    <button
+                    <Button
+                      variant="outline-success"
                       onClick={() => {
                         if (!questions.map((e) => e._id).includes(e._id)) {
                           setquestions([...questions, e]);
@@ -209,9 +225,12 @@ export default function create({ exam }) {
                       }}
                     >
                       Add
-                    </button>
+                    </Button>
+                    <br />
                     {e.title}
-                    {e.points}
+                    <br />
+                    marks: {e.points}
+                    <br />
                     {e.answers.map((e) => (
                       <span
                         style={
@@ -221,9 +240,10 @@ export default function create({ exam }) {
                         }
                       >
                         {e.text}
+                        <br />
                       </span>
                     ))}
-
+                    <br />
                     {e.tags.map((e) => e != "none" && <>{e} </>)}
                   </div>
                 </>
@@ -231,22 +251,27 @@ export default function create({ exam }) {
             )}
           </div>
         </div>
+        <br />
+        <br />
         {/* approved */}
         <div>
           total : {totalpoints} <br />
-          <button
+          <Button
+            variant="outline-danger"
             onClick={() => {
               setquestions([]);
               settotalpoints(0);
             }}
           >
             clear
-          </button>
+          </Button>
+          <br />
           {questions.map((question) => {
             if (question.passage) {
               return (
                 <>
-                  <button
+                  <Button
+                    variant="outline-danger"
                     onClick={() => {
                       setquestions(questions.filter((e) => e != question));
                       let t = 0;
@@ -257,22 +282,24 @@ export default function create({ exam }) {
                     }}
                   >
                     delete
-                  </button>
+                  </Button>
                   {question.data}
                   {question.questions.length}
+                  <br />
                 </>
               );
             } else {
               return (
                 <>
-                  <button
+                  <Button
+                    variant="outline-danger"
                     onClick={() => {
                       setquestions(questions.filter((e) => e != question));
                       settotalpoints(totalpoints - parseInt(question.points));
                     }}
                   >
                     delete
-                  </button>
+                  </Button>
                   {question.title} {question.points}
                   <br />
                 </>
@@ -281,23 +308,32 @@ export default function create({ exam }) {
           })}
         </div>
       </div>
-      <button
-        onClick={async () => {
-          await fetch("/api/exams/edit", {
-            method: "POST",
-            body: JSON.stringify({
-              id: exam._id,
-              questions,
-              duration,
-              startdate,
-              enddate,
-              totalpoints,
-            }),
-          });
-        }}
-      >
-        edit
-      </button>
+      {loading ? (
+        <Spinner variant="border" />
+      ) : (
+        <Button
+          variant="outline-success"
+          onClick={async () => {
+            setloading(true);
+            await fetch("/api/exams/edit", {
+              method: "POST",
+              body: JSON.stringify({
+                id: exam._id,
+                questions,
+                duration,
+                startdate,
+                enddate,
+                totalpoints,
+              }),
+            });
+            setloading(false);
+            let currentLocation = window.location.href;
+            window.location.href = currentLocation;
+          }}
+        >
+          send
+        </Button>
+      )}
     </div>
   );
 }

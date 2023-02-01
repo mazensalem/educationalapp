@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function editquestions({ question }) {
   const [questionstitle, setquestiontitle] = useState(question.title);
@@ -12,6 +13,7 @@ export default function editquestions({ question }) {
   const [questiontags, setquestiontags] = useState(
     question.tags.slice(0, question.tags.length - 1)
   );
+  const [loading, setloading] = useState(false);
   const { data } = useSession();
   if (!data) {
     return <>loading</>;
@@ -56,6 +58,7 @@ export default function editquestions({ question }) {
             />
             <input
               type="checkbox"
+              className="form-check-input"
               checked={chos.istrue}
               onChange={(e) => {
                 let nquestionchos = questionschos;
@@ -81,6 +84,7 @@ export default function editquestions({ question }) {
         />
         <input
           type="checkbox"
+          className="form-check-input"
           checked={questionschos[questionschos.length - 1].istrue}
           onChange={(e) => {
             let nquestionchos = questionschos;
@@ -116,22 +120,31 @@ export default function editquestions({ question }) {
           </>
         ))}
       </div>
-      <button
-        onClick={async () => {
-          await fetch("/api/questions/edit", {
-            method: "POST",
-            body: JSON.stringify({
-              id: question._id,
-              title: questionstitle,
-              points: questionpoints,
-              answers: questionschos.slice(0, questionschos.length - 1),
-              tags: [...questiontags, "none"],
-            }),
-          });
-        }}
-      >
-        edit
-      </button>
+      {loading ? (
+        <Spinner variant="border" />
+      ) : (
+        <Button
+          variant="outline-success"
+          onClick={async () => {
+            setloading(true);
+            await fetch("/api/questions/edit", {
+              method: "POST",
+              body: JSON.stringify({
+                id: question._id,
+                title: questionstitle,
+                points: questionpoints,
+                answers: questionschos.slice(0, questionschos.length - 1),
+                tags: [...questiontags, "none"],
+              }),
+            });
+            setloading(false);
+            let currentLocation = window.location.href;
+            window.location.href = currentLocation;
+          }}
+        >
+          edit
+        </Button>
+      )}
     </div>
   );
 }
@@ -142,8 +155,7 @@ export async function getServerSideProps(context) {
     body: JSON.stringify(context.params.questionid),
   });
   const q = await d.json();
-  console.log(q);
-  if (q.tags[4] != "none") {
+  if (q.tags[5] != "none") {
     return {
       redirect: {
         destination: "/",

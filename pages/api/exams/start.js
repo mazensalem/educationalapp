@@ -24,6 +24,29 @@ export default async function handler(req, res) {
         return;
       }
     }
+    let questions = exam.questions.map((e) => {
+      if (e.passage) {
+        return {
+          ...e,
+          questions: e.questions.map((question) => {
+            return {
+              ...question,
+              mychoise: "",
+              answers: question.answers.map((ans) => ans.text),
+            };
+          }),
+        };
+      } else {
+        return {
+          ...e,
+          answers: [...e.answers.map((a) => a.text)],
+          mychoise: "",
+        };
+      }
+    });
+
+    questions.sort(() => Math.random() - 0.5);
+
     await ucoll.replaceOne(
       { email: session.user.email },
       {
@@ -32,26 +55,7 @@ export default async function handler(req, res) {
           examid,
           starttime: ustarttime,
           endtime: uendtime,
-          questions: exam.questions.map((e) => {
-            if (e.passage) {
-              return {
-                ...e,
-                questions: e.questions.map((question) => {
-                  return {
-                    ...question,
-                    mychoise: "",
-                    answers: question.answers.map((ans) => ans.text),
-                  };
-                }),
-              };
-            } else {
-              return {
-                ...e,
-                answers: [...e.answers.map((a) => a.text)],
-                mychoise: "",
-              };
-            }
-          }),
+          questions,
         },
       }
     );

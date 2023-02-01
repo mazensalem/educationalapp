@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function addquestions() {
   const [questionstitle, setquestiontitle] = useState("");
@@ -10,6 +11,7 @@ export default function addquestions() {
   const [questionpoints, setquestionpoints] = useState(0);
   const [questiontags, setquestiontags] = useState(["", "", "", "", ""]);
   const { data } = useSession();
+  const [loading, setloading] = useState(false);
   if (!data) {
     return <>loading</>;
   }
@@ -54,6 +56,7 @@ export default function addquestions() {
             <input
               type="checkbox"
               checked={chos.istrue}
+              className="form-check-input"
               onChange={(e) => {
                 let nquestionchos = questionschos;
                 nquestionchos[i].istrue = e.target.checked;
@@ -78,6 +81,7 @@ export default function addquestions() {
         />
         <input
           type="checkbox"
+          className="form-check-input"
           checked={questionschos[questionschos.length - 1].istrue}
           onChange={(e) => {
             let nquestionchos = questionschos;
@@ -113,21 +117,30 @@ export default function addquestions() {
           </>
         ))}
       </div>
-      <button
-        onClick={async () => {
-          await fetch("/api/questions/create", {
-            method: "POST",
-            body: JSON.stringify({
-              title: questionstitle,
-              points: questionpoints,
-              answers: questionschos.splice(0, questionschos.length - 1),
-              tags: [...questiontags, "none"],
-            }),
-          });
-        }}
-      >
-        send
-      </button>
+      {loading ? (
+        <Spinner variant="border" />
+      ) : (
+        <Button
+          variant="outline-success"
+          onClick={async () => {
+            setloading(true);
+            await fetch("/api/questions/create", {
+              method: "POST",
+              body: JSON.stringify({
+                title: questionstitle,
+                points: questionpoints,
+                answers: questionschos.splice(0, questionschos.length - 1),
+                tags: [...questiontags, "none"],
+              }),
+            });
+            setloading(false);
+            let currentLocation = window.location.href;
+            window.location.href = currentLocation;
+          }}
+        >
+          send
+        </Button>
+      )}
     </div>
   );
 }

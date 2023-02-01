@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 let firstrender = true;
 
@@ -8,6 +9,7 @@ export default function Exam({ exam }) {
   const [timer, settimer] = useState(0);
   const [qnumber, setqnumber] = useState(0);
   const [storedans, setstoredans] = useState([]);
+  const [loading, setloading] = useState(false);
 
   const getthechoise = (add) => {
     if (session.data.user.currentexam.questions[qnumber + add].passage) {
@@ -51,19 +53,28 @@ export default function Exam({ exam }) {
   if (!session.data.user.currentexam.examid) {
     return (
       <div>
-        <button
-          onClick={async () => {
-            await fetch("/api/exams/start", {
-              method: "POST",
-              body: JSON.stringify({
-                examid: exam._id,
-                starttime: new Date().getTime(),
-              }),
-            });
-          }}
-        >
-          Start
-        </button>
+        {loading ? (
+          <Spinner variant="outline-danger" />
+        ) : (
+          <Button
+            variant="outline-success"
+            onClick={async () => {
+              setloading(true);
+              await fetch("/api/exams/start", {
+                method: "POST",
+                body: JSON.stringify({
+                  examid: exam._id,
+                  starttime: new Date().getTime(),
+                }),
+              });
+              setloading(false);
+              let currentLocation = window.location.href;
+              window.location.href = currentLocation;
+            }}
+          >
+            Start
+          </Button>
+        )}
       </div>
     );
   }
@@ -79,6 +90,7 @@ export default function Exam({ exam }) {
         {session.data.user.currentexam.questions[qnumber].passage ? (
           <>
             <div>{session.data.user.currentexam.questions[qnumber].data}</div>
+            <br />
             <div>
               {session.data.user.currentexam.questions[qnumber].questions.map(
                 (question, i) => (
@@ -88,10 +100,14 @@ export default function Exam({ exam }) {
                     {question.answers.map((ans) => (
                       <>
                         {storedans[i] == ans ? (
-                          <>you choise this</>
+                          <>
+                            you choise this
+                            <br />
+                          </>
                         ) : (
                           <>
-                            <button
+                            <Button
+                              variant="outline-secondary"
                               onClick={() => {
                                 let nstoredans = storedans;
                                 nstoredans[i] = ans;
@@ -99,13 +115,14 @@ export default function Exam({ exam }) {
                               }}
                             >
                               choise
-                            </button>
+                            </Button>
                           </>
                         )}
-                        <br />
                         {ans}
+                        <br />
                       </>
                     ))}
+                    <br />
                   </>
                 )
               )}
@@ -119,16 +136,20 @@ export default function Exam({ exam }) {
               (ans) => (
                 <>
                   {storedans[0] == ans ? (
-                    <>you choise this</>
+                    <>
+                      you choise this
+                      <br />
+                    </>
                   ) : (
                     <>
-                      <button
+                      <Button
+                        variant="outline-secondary"
                         onClick={() => {
                           setstoredans([ans]);
                         }}
                       >
                         choise
-                      </button>
+                      </Button>
                     </>
                   )}
                   {ans}
@@ -139,77 +160,109 @@ export default function Exam({ exam }) {
           </>
         )}
         {qnumber != 0 && (
-          <button
-            onClick={async () => {
-              await fetch("/api/exams/store", {
-                method: "POST",
-                body: JSON.stringify({ qnumber, storedans }),
-              });
-              setqnumber(qnumber - 1);
-              if (session.data.user.currentexam.questions[qnumber].passage) {
-                for (
-                  let i = 0;
-                  i <
-                  session.data.user.currentexam.questions[qnumber].questions
-                    .length;
-                  i++
-                ) {
-                  session.data.user.currentexam.questions[qnumber].questions[
-                    i
-                  ].mychoise = storedans[i];
-                }
-              } else {
-                session.data.user.currentexam.questions[qnumber].mychoise =
-                  storedans[0];
-              }
-              getthechoise(-1);
-            }}
-          >
-            back
-          </button>
+          <>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  await fetch("/api/exams/store", {
+                    method: "POST",
+                    body: JSON.stringify({ qnumber, storedans }),
+                  });
+                  setqnumber(qnumber - 1);
+                  if (
+                    session.data.user.currentexam.questions[qnumber].passage
+                  ) {
+                    for (
+                      let i = 0;
+                      i <
+                      session.data.user.currentexam.questions[qnumber].questions
+                        .length;
+                      i++
+                    ) {
+                      session.data.user.currentexam.questions[
+                        qnumber
+                      ].questions[i].mychoise = storedans[i];
+                    }
+                  } else {
+                    session.data.user.currentexam.questions[qnumber].mychoise =
+                      storedans[0];
+                  }
+                  getthechoise(-1);
+                  setloading(false);
+                }}
+              >
+                back
+              </Button>
+            )}
+          </>
         )}
         {qnumber + 1} / {session.data.user.currentexam.questions.length}
         {qnumber != session.data.user.currentexam.questions.length - 1 ? (
-          <button
-            onClick={async () => {
-              await fetch("/api/exams/store", {
-                method: "POST",
-                body: JSON.stringify({ qnumber, storedans }),
-              });
-              setqnumber(qnumber + 1);
-              if (session.data.user.currentexam.questions[qnumber].passage) {
-                for (
-                  let i = 0;
-                  i <
-                  session.data.user.currentexam.questions[qnumber].questions
-                    .length;
-                  i++
-                ) {
-                  session.data.user.currentexam.questions[qnumber].questions[
-                    i
-                  ].mychoise = storedans[i];
-                }
-              } else {
-                session.data.user.currentexam.questions[qnumber].mychoise =
-                  storedans[0];
-              }
-              getthechoise(1);
-            }}
-          >
-            next
-          </button>
+          <>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  await fetch("/api/exams/store", {
+                    method: "POST",
+                    body: JSON.stringify({ qnumber, storedans }),
+                  });
+                  setqnumber(qnumber + 1);
+                  if (
+                    session.data.user.currentexam.questions[qnumber].passage
+                  ) {
+                    for (
+                      let i = 0;
+                      i <
+                      session.data.user.currentexam.questions[qnumber].questions
+                        .length;
+                      i++
+                    ) {
+                      session.data.user.currentexam.questions[
+                        qnumber
+                      ].questions[i].mychoise = storedans[i];
+                    }
+                  } else {
+                    session.data.user.currentexam.questions[qnumber].mychoise =
+                      storedans[0];
+                  }
+                  getthechoise(1);
+                  setloading(false);
+                }}
+              >
+                next
+              </Button>
+            )}
+          </>
         ) : (
-          <button
-            onClick={async () => {
-              await fetch("/api/exams/store", {
-                method: "POST",
-                body: JSON.stringify({ qnumber, storedans }),
-              });
-              await fetch("/api/exams/finish");
-            }}
-          >
-            submit
-          </button>
+          <>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  await fetch("/api/exams/store", {
+                    method: "POST",
+                    body: JSON.stringify({ qnumber, storedans }),
+                  });
+                  await fetch("/api/exams/finish");
+                  setloading(false);
+                  window.location.href = "/profile";
+                }}
+              >
+                submit
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>

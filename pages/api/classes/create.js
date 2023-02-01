@@ -15,6 +15,7 @@ export default async function handler(req, res) {
     accepted: [],
     dienyed: [],
     posts: [],
+    massages: [],
     name: req.body,
   });
   const id = n.insertedIds[0];
@@ -25,6 +26,7 @@ export default async function handler(req, res) {
       accepted: [],
       dienyed: [],
       posts: [],
+      massages: [],
       name: req.body,
       code: id.toString().slice(17, 24),
     }

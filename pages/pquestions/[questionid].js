@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function editquestions({ question }) {
   const [passage, setpassage] = useState(question.data);
@@ -9,6 +10,7 @@ export default function editquestions({ question }) {
       return { ...e, answers: [...e.answers, { text: "", istrue: false }] };
     }),
   ]);
+  const [loading, setloading] = useState(false);
   const { data } = useSession();
   if (!data) {
     return <>loading</>;
@@ -24,7 +26,8 @@ export default function editquestions({ question }) {
       <div>
         {questions.map((question, i) => (
           <>
-            <button
+            <Button
+              variant="outline-danger"
               onClick={() => {
                 setquestions([
                   ...questions.slice(0, i).concat(questions.slice(i + 1)),
@@ -32,7 +35,7 @@ export default function editquestions({ question }) {
               }}
             >
               delete
-            </button>
+            </Button>
             <br />
             title:{" "}
             <input
@@ -78,6 +81,7 @@ export default function editquestions({ question }) {
                   />
                   <input
                     type="checkbox"
+                    className="form-check-input"
                     checked={questions[i].answers[j].istrue}
                     onChange={(e) => {
                       let nquestions = questions;
@@ -108,6 +112,7 @@ export default function editquestions({ question }) {
               />
               <input
                 type="checkbox"
+                className="form-check-input"
                 checked={
                   questions[i].answers[questions[i].answers.length - 1].istrue
                 }
@@ -122,7 +127,8 @@ export default function editquestions({ question }) {
             </div>
           </>
         ))}
-        <button
+        <Button
+          variant="outline-success"
           onClick={() => {
             setquestions([
               ...questions,
@@ -136,27 +142,36 @@ export default function editquestions({ question }) {
           }}
         >
           Add question
-        </button>
+        </Button>
       </div>
-      <button
-        onClick={async () => {
-          await fetch("/api/questions/editp", {
-            method: "POST",
-            body: JSON.stringify({
-              id: question._id,
-              passage,
-              questions: questions.map((e) => {
-                return {
-                  ...e,
-                  answers: e.answers.slice(0, e.answers.length - 1),
-                };
+      {loading ? (
+        <Spinner variant="border" />
+      ) : (
+        <Button
+          variant="outline-success"
+          onClick={async () => {
+            setloading(true);
+            await fetch("/api/questions/editp", {
+              method: "POST",
+              body: JSON.stringify({
+                id: question._id,
+                passage,
+                questions: questions.map((e) => {
+                  return {
+                    ...e,
+                    answers: e.answers.slice(0, e.answers.length - 1),
+                  };
+                }),
               }),
-            }),
-          });
-        }}
-      >
-        edit
-      </button>
+            });
+            setloading(false);
+            let currentLocation = window.location.href;
+            window.location.href = currentLocation;
+          }}
+        >
+          edit
+        </Button>
+      )}
     </div>
   );
 }

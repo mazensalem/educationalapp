@@ -9,14 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@next-auth/mongodb-adapter": "^1.1.1",
+    "babel-plugin-macros": "^3.1.0",
+    "bootstrap": "^5.2.3",
     "mongodb": "^4.13.0",
     "next": "13.1.5",
     "next-auth": "^4.18.10",
     "react": "18.2.0",
+    "react-bootstrap": "^2.7.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.6",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.5"
   }

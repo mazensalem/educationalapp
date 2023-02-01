@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getSession, useSession } from "next-auth/react";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function Class({
   inrevusers,
@@ -20,6 +21,7 @@ export default function Class({
   const [iseditingpost, setiseditingpost] = useState(false);
   const [editingpostid, seteditingpostid] = useState("");
   const [massage, setmassage] = useState("");
+  const [loading, setloading] = useState(false);
   if (!data) {
     return <>loading</>;
   }
@@ -32,87 +34,212 @@ export default function Class({
     <div>
       {data.user.admin && (
         <>
-          <div>
-            <h2>in review</h2>
-            {inrevusers.map((e) => (
-              <div>
-                <span title={e.email}>{e.name}</span>
+          <div
+            style={{
+              width: "40rem",
+              border: "1px solid gainsboro",
+              borderRadius: "3px",
+              margin: "1rem",
+            }}
+          >
+            <nav>
+              <div className="nav nav-tabs" id="nav-tab" role="tablist">
                 <button
-                  onClick={async () => {
-                    await fetch("/api/users/changerev", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        userid: e.id,
-                        content: "accept",
-                        classid,
-                      }),
-                    });
-                  }}
+                  className="nav-link active"
+                  id="nav-home-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-home"
+                  type="button"
+                  role="tab"
+                  aria-controls="nav-home"
+                  aria-selected="true"
                 >
-                  accept
+                  Inrev
                 </button>
                 <button
-                  onClick={async () => {
-                    await fetch("/api/users/changerev", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        userid: e.id,
-                        content: "deny",
-                        classid,
-                      }),
-                    });
-                  }}
+                  className="nav-link"
+                  id="nav-profile-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-profile"
+                  type="button"
+                  role="tab"
+                  aria-controls="nav-profile"
+                  aria-selected="false"
                 >
-                  deny
+                  Accept
                 </button>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <h2>accepted</h2>
-            {accepted.map((e) => (
-              <div>
-                <span title={e.email}>{e.name}</span>
                 <button
-                  onClick={async () => {
-                    await fetch("/api/users/changerev", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        userid: e.id,
-                        content: "deny",
-                        classid,
-                      }),
-                    });
-                  }}
+                  className="nav-link"
+                  id="nav-contact-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-contact"
+                  type="button"
+                  role="tab"
+                  aria-controls="nav-contact"
+                  aria-selected="false"
                 >
-                  deny
+                  Rejection
                 </button>
               </div>
-            ))}
-          </div>
-
-          <div>
-            <h2>dienyed</h2>
-            {denyed.map((e) => (
-              <div>
-                <span title={e.email}>{e.name}</span>
-                <button
-                  onClick={async () => {
-                    await fetch("/api/users/changerev", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        userid: e.id,
-                        content: "accept",
-                        classid,
-                      }),
-                    });
-                  }}
-                >
-                  accept
-                </button>
+            </nav>
+            <div
+              style={{ margin: ".5rem" }}
+              className="tab-content"
+              id="nav-tabContent"
+            >
+              <div
+                className="tab-pane fade show active"
+                id="nav-home"
+                role="tabpanel"
+                aria-labelledby="nav-home-tab"
+              >
+                <div>
+                  <h2>in review</h2>
+                  {inrevusers.map((e) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "50%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span title={e.email}>{e.name}</span>
+                      {loading ? (
+                        <Spinner variant="border" />
+                      ) : (
+                        <>
+                          <Button
+                            variant="outline-success"
+                            onClick={async () => {
+                              setloading(true);
+                              await fetch("/api/users/changerev", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                  userid: e.id,
+                                  content: "accept",
+                                  classid,
+                                }),
+                              });
+                              setloading(true);
+                              let currentLocation = window.location.href;
+                              window.location.href = currentLocation;
+                            }}
+                          >
+                            accept
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            onClick={async () => {
+                              await fetch("/api/users/changerev", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                  userid: e.id,
+                                  content: "deny",
+                                  classid,
+                                }),
+                              });
+                            }}
+                          >
+                            deny
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+              <div
+                class="tab-pane fade"
+                id="nav-profile"
+                role="tabpanel"
+                aria-labelledby="nav-profile-tab"
+              >
+                <div>
+                  <h2>accepted</h2>
+                  {accepted.map((e) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "50%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span title={e.email}>{e.name}</span>
+                      {loading ? (
+                        <Spinner variant="border" />
+                      ) : (
+                        <Button
+                          variant="outline-danger"
+                          onClick={async () => {
+                            setloading(true);
+                            await fetch("/api/users/changerev", {
+                              method: "POST",
+                              body: JSON.stringify({
+                                userid: e.id,
+                                content: "deny",
+                                classid,
+                              }),
+                            });
+                            setloading(false);
+                            let currentLocation = window.location.href;
+                            window.location.href = currentLocation;
+                          }}
+                        >
+                          deny
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div
+                class="tab-pane fade"
+                id="nav-contact"
+                role="tabpanel"
+                aria-labelledby="nav-contact-tab"
+              >
+                <div>
+                  <h2>dienyed</h2>
+                  {denyed.map((e) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "50%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span title={e.email}>{e.name}</span>
+                      {loading ? (
+                        <Spinner variant="border" />
+                      ) : (
+                        <Button
+                          variant="outline-success"
+                          onClick={async () => {
+                            setloading(true);
+                            await fetch("/api/users/changerev", {
+                              method: "POST",
+                              body: JSON.stringify({
+                                userid: e.id,
+                                content: "accept",
+                                classid,
+                              }),
+                            });
+                            setloading(false);
+                            let currentLocation = window.location.href;
+                            window.location.href = currentLocation;
+                          }}
+                        >
+                          accept
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Name */}
@@ -121,16 +248,25 @@ export default function Class({
               value={classname}
               onChange={(e) => setclassname(e.target.value)}
             />
-            <button
-              onClick={async () => {
-                await fetch("/api/classes/edit", {
-                  method: "POST",
-                  body: JSON.stringify({ classid, classname }),
-                });
-              }}
-            >
-              send
-            </button>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  await fetch("/api/classes/edit", {
+                    method: "POST",
+                    body: JSON.stringify({ classid, classname }),
+                  });
+                  setloading(false);
+                  let currentLocation = window.location.href;
+                  window.location.href = currentLocation;
+                }}
+              >
+                send
+              </Button>
+            )}
           </div>
 
           <div>
@@ -139,7 +275,6 @@ export default function Class({
         </>
       )}
       <span>{cname}</span>
-
       {/* News */}
       <div>
         {posts.map((post, i) => {
@@ -148,17 +283,28 @@ export default function Class({
               <>
                 {data.user.admin && (
                   <>
-                    <button
-                      onClick={async () => {
-                        fetch("/api/posts/delete", {
-                          method: "POST",
-                          body: JSON.stringify({ postid: post._id, classid }),
-                        });
-                      }}
-                    >
-                      delete
-                    </button>
-                    <button
+                    {loading ? (
+                      <Spinner variant="border" />
+                    ) : (
+                      <Button
+                        variant="outline-danger"
+                        onClick={async () => {
+                          setloading(true);
+                          await fetch("/api/posts/delete", {
+                            method: "POST",
+                            body: JSON.stringify({ postid: post._id, classid }),
+                          });
+                          setloading(false);
+                          let currentLocation = window.location.href;
+                          window.location.href = currentLocation;
+                        }}
+                      >
+                        delete
+                      </Button>
+                    )}
+
+                    <Button
+                      variant="outline-secondary"
                       onClick={() => {
                         setiseditingpost(true);
                         seteditingpostid(post._id);
@@ -170,55 +316,91 @@ export default function Class({
                       }}
                     >
                       edit
-                    </button>
+                    </Button>
                   </>
                 )}
-                {post.text} <br /> {post.image && <img src={post.image} />}{" "}
-                <br />{" "}
-                {post.vote.map((e) => {
-                  console.log(votes["63d50f68d9f8346e66085bd1"]["sssss"][0]);
-                  console.log(votes["63d50f68d9f8346e66085bd1"]["sssss"][0]);
-                  return (
-                    <div
-                      onClick={async () => {
-                        await fetch("/api/posts/changevote", {
-                          method: "POST",
-                          body: JSON.stringify({
-                            postid: post._id,
-                            vote: e.title,
-                          }),
-                        });
-                      }}
-                    >
-                      {e.count.includes(data.user.id) && (
-                        <>
-                          <span>you choose this</span> <br />
-                        </>
-                      )}
-                      {e.title} <span>{e.count.length}</span>
-                      {data.user.admin && (
-                        <div>
-                          {votes[post._id][e.title] &&
-                            votes[post._id][e.title].map((f) => (
-                              <span>{f}</span>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                <div className="card" style={{ width: "18rem" }}>
+                  <h5 className="card-title">{post.text}</h5>
+                  {post.image && (
+                    <img
+                      src={post.image}
+                      className="card-img-top"
+                      alt="postimage"
+                    />
+                  )}
+                  <div className="card-body">
+                    <ul class="list-group list-group-flush">
+                      {post.vote.map((e) => {
+                        return (
+                          <>
+                            {loading ? (
+                              <Spinner variant="border" />
+                            ) : (
+                              <li
+                                className="list-group-item"
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: e.count.includes(
+                                    data.user.id
+                                  )
+                                    ? "green"
+                                    : "white",
+                                }}
+                                onClick={async () => {
+                                  setloading(true);
+                                  await fetch("/api/posts/changevote", {
+                                    method: "POST",
+                                    body: JSON.stringify({
+                                      postid: post._id,
+                                      vote: e.title,
+                                    }),
+                                  });
+                                  setloading(false);
+                                  let currentLocation = window.location.href;
+                                  window.location.href = currentLocation;
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  {e.title} <span>{e.count.length}</span>
+                                </div>
+                                {data.user.admin && (
+                                  <div>
+                                    {votes[post._id][e.title] &&
+                                      votes[post._id][e.title].map((f) => (
+                                        <span>{f}</span>
+                                      ))}
+                                  </div>
+                                )}
+                              </li>
+                            )}
+                          </>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
               </>
             );
           }
         })}
+        <br />
         {data.user.admin && (
           <div>
+            ADD A POST
+            <br />
             <input
               value={inputtext}
               onChange={(e) => setinputtext(e.target.value)}
             />
             <input
               type="file"
+              className="form-control"
+              style={{ width: "25rem" }}
               accept="image/*"
               onChange={(e) => {
                 let reader = new FileReader();
@@ -230,13 +412,14 @@ export default function Class({
                 }
               }}
             />
-            <button
+            <Button
+              variant="outline-danger"
               onClick={() => {
                 setimg("");
               }}
             >
               delete image
-            </button>
+            </Button>
             <div>
               {titles.slice(0, length - 1).map((title, i) => (
                 <input
@@ -272,24 +455,35 @@ export default function Class({
             </div>
             {iseditingpost && (
               <>
-                <button
-                  onClick={async () => {
-                    await fetch("/api/posts/create", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        text: inputtext,
-                        img,
-                        titles: titles.splice(0, titles.length - 1),
-                        classid,
-                        postid: editingpostid,
-                        editing: true,
-                      }),
-                    });
-                  }}
-                >
-                  save the edit
-                </button>
-                <button
+                {loading ? (
+                  <Spinner variant="border" />
+                ) : (
+                  <Button
+                    variant="outline-success"
+                    onClick={async () => {
+                      setloading(true);
+                      await fetch("/api/posts/create", {
+                        method: "POST",
+                        body: JSON.stringify({
+                          text: inputtext,
+                          img,
+                          titles: titles.splice(0, titles.length - 1),
+                          classid,
+                          postid: editingpostid,
+                          editing: true,
+                        }),
+                      });
+                      setloading(false);
+                      let currentLocation = window.location.href;
+                      window.location.href = currentLocation;
+                    }}
+                  >
+                    save the edit
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline-secondary"
                   onClick={() => {
                     setimg("");
                     settitles([""]);
@@ -299,52 +493,84 @@ export default function Class({
                   }}
                 >
                   exit edit
-                </button>
+                </Button>
               </>
             )}
-            <button
-              onClick={async () => {
-                await fetch("/api/posts/create", {
-                  method: "POST",
-                  body: JSON.stringify({
-                    text: inputtext,
-                    img,
-                    titles: titles.splice(0, titles.length - 1),
-                    classid,
-                  }),
-                });
-              }}
-            >
-              create new
-            </button>
+            {loading ? (
+              <Spinner variant="border" />
+            ) : (
+              <Button
+                variant="outline-success"
+                onClick={async () => {
+                  setloading(true);
+                  await fetch("/api/posts/create", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      text: inputtext,
+                      img,
+                      titles: titles.splice(0, titles.length - 1),
+                      classid,
+                    }),
+                  });
+                  setloading(false);
+                  let currentLocation = window.location.href;
+                  window.location.href = currentLocation;
+                }}
+              >
+                create new
+              </Button>
+            )}
           </div>
         )}
       </div>
+      <br />
       {/* Tests */}
       <div>
-        {tests.map((test) => (
-          <>
-            you have a{" "}
-            <a href={"/exams/" + test._id}> {test.duration} min test</a> between{" "}
-            {test.startdate} and {test.enddate}
-            {data.user.admin && (
-              <>
-                <button
-                  onClick={async () => {
-                    await fetch("/api/exams/delete", {
-                      method: "POST",
-                      body: test._id,
-                    });
-                  }}
-                >
-                  delete
-                </button>
-              </>
-            )}
-          </>
-        ))}
+        EXAMS
+        <ul class="list-group list-group" style={{ width: "25rem" }}>
+          {tests.map((test) => (
+            <li
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignContent: "center",
+              }}
+              class="list-group-item"
+            >
+              <div style={{ width: "10rem" }}>
+                <a href={"/exams/" + test._id}> {test.duration} min test</a>{" "}
+                between {test.startdate} and {test.enddate}
+              </div>
+              {data.user.admin && (
+                <>
+                  {loading ? (
+                    <Spinner variant="border" />
+                  ) : (
+                    <Button
+                      variant="outline-danger"
+                      onClick={async () => {
+                        setloading(true);
+                        await fetch("/api/exams/delete", {
+                          method: "POST",
+                          body: test._id,
+                        });
+                        setloading(false);
+                        let currentLocation = window.location.href;
+                        window.location.href = currentLocation;
+                      }}
+                    >
+                      delete
+                    </Button>
+                  )}
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
+      <br />
       {/* massages */}
+      MASSAGES
       {data.user.admin ? (
         <div>
           {massages.map((massage) => (
@@ -356,16 +582,24 @@ export default function Class({
       ) : (
         <>
           <input value={massage} onChange={(e) => setmassage(e.target.value)} />
-          <button
-            onClick={async () => {
-              await fetch("/api/chat/send", {
-                method: "POST",
-                body: JSON.stringify({ massage, classid }),
-              });
-            }}
-          >
-            send
-          </button>
+          {loading ? (
+            <Spinner variant="border" />
+          ) : (
+            <Button
+              onClick={async () => {
+                setloading(true);
+                await fetch("/api/chat/send", {
+                  method: "POST",
+                  body: JSON.stringify({ massage, classid }),
+                });
+                setloading(false);
+                let currentLocation = window.location.href;
+                window.location.href = currentLocation;
+              }}
+            >
+              send
+            </Button>
+          )}
         </>
       )}
     </div>
