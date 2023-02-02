@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Alert, Button, Card, ListGroup, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 export default function Profile({ classses, qustions }) {
   const { data } = useSession();
@@ -188,7 +189,7 @@ export default function Profile({ classses, qustions }) {
           <ListGroup style={{ width: "18rem", marginTop: "1rem" }}>
             {data.user.admin && (
               <ListGroup.Item>
-                <a href="/createclass">Add Class</a>
+                <Link href="/createclass">Add Class</Link>
               </ListGroup.Item>
             )}
             {classses.map((rclass) => (
@@ -198,16 +199,17 @@ export default function Profile({ classses, qustions }) {
                   className="d-flex justify-content-between align-items-center"
                 >
                   <div className="d-flex flex-column">
-                    <a
-                      style={{
-                        cursor: "pointer",
-                        textDecoration: "none",
-                        color: "black",
-                      }}
-                      href={"/class/" + rclass.code}
-                    >
-                      {rclass.name}
-                    </a>
+                    <Link href={"/class/" + rclass.code}>
+                      <span
+                        style={{
+                          cursor: "pointer",
+                          textDecoration: "none",
+                          color: "black",
+                        }}
+                      >
+                        {rclass.name}
+                      </span>
+                    </Link>
                     <span>
                       {rclass.inrev.includes(data.user.id) && (
                         <>you are in review</>
@@ -264,10 +266,10 @@ export default function Profile({ classses, qustions }) {
           {data.user.admin && (
             <ListGroup style={{ width: "18rem", marginTop: "1rem" }}>
               <ListGroup.Item>
-                <a href="/addquestions">Add</a>
+                <Link href="/addquestions">Add</Link>
               </ListGroup.Item>
               <ListGroup.Item>
-                <a href="/addquestionp">Addp</a>
+                <Link href="/addquestionp">Addp</Link>
               </ListGroup.Item>
               {qustions.map((question, i) => (
                 <div key={i}>
@@ -279,17 +281,18 @@ export default function Profile({ classses, qustions }) {
                         alignItems: "center",
                       }}
                     >
-                      <a
-                        style={{ textDecoration: "none", color: "black" }}
-                        href={"/pquestions/" + question._id}
-                      >
-                        {question.data.slice(0, 50)}{" "}
-                        {question.data.length >= 55 && (
-                          <span style={{ opacity: "50%" }}>
-                            {question.data.slice(50, 55)}...
-                          </span>
-                        )}
-                      </a>
+                      <Link href={"/pquestions/" + question._id}>
+                        <span
+                          style={{ textDecoration: "none", color: "black" }}
+                        >
+                          {question.data.slice(0, 50)}{" "}
+                          {question.data.length >= 55 && (
+                            <span style={{ opacity: "50%" }}>
+                              {question.data.slice(50, 55)}...
+                            </span>
+                          )}
+                        </span>
+                      </Link>
                       {isloading ? (
                         <Spinner animation="border" />
                       ) : (
@@ -318,15 +321,16 @@ export default function Profile({ classses, qustions }) {
                         alignItems: "center",
                       }}
                     >
-                      <a
-                        style={{
-                          textDecoration: "none",
-                          color: "black",
-                        }}
-                        href={"/questions/" + question._id}
-                      >
-                        {question.title}
-                      </a>
+                      <Link href={"/questions/" + question._id}>
+                        <span
+                          style={{
+                            textDecoration: "none",
+                            color: "black",
+                          }}
+                        >
+                          {question.title}
+                        </span>
+                      </Link>
                       {isloading ? (
                         <Spinner animation="border" />
                       ) : (
@@ -358,12 +362,11 @@ export default function Profile({ classses, qustions }) {
           <ListGroup style={{ width: "18rem", marginTop: "1rem" }}>
             {data.user.exams.map((exam, i) => (
               <ListGroup.Item key={i}>
-                <a
-                  style={{ textDecoration: "none", color: "black" }}
-                  href={"exams/review/" + exam.examid}
-                >
-                  {i + 1}. {exam.mypoints}
-                </a>
+                <Link href={"exams/review/" + exam.examid}>
+                  <span style={{ textDecoration: "none", color: "black" }}>
+                    {i + 1}. {exam.mypoints}
+                  </span>
+                </Link>
               </ListGroup.Item>
             ))}
           </ListGroup>
