@@ -15,6 +15,24 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
+      profile: (profile, token) => {
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          image: profile.image,
+          emailVerified: profile.emailVerified,
+          admin: false,
+          classcode: [],
+          currentexam: {
+            examid: "",
+            starttime: 0,
+            endtime: 0,
+            questions: [],
+          },
+          exams: [],
+        };
+      },
     }),
   ],
 });
