@@ -68,7 +68,7 @@ export default function Profile({ classses, qustions }) {
                           borderBottom: "3px solid",
                         }}
                         autoFocus
-                        value={name || data.user.name}
+                        value={name}
                         onChange={(e) => setname(e.target.value)}
                       />
                       <div
