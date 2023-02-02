@@ -378,12 +378,17 @@ export default function Profile({ classses, qustions }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession({ req: context.req });
-  const rclasses = await fetch("http://localhost:3000/api/users/getclass", {
-    body: JSON.stringify(session),
-    method: "POST",
-  });
+  const rclasses = await fetch(
+    process.env.NEXTAUTH_URL + "/api/users/getclass",
+    {
+      body: JSON.stringify(session),
+      method: "POST",
+    }
+  );
   const classses = await rclasses.json();
-  const rquestions = await fetch("http://localhost:3000/api/questions/getall");
+  const rquestions = await fetch(
+    process.env.NEXTAUTH_URL + "/api/questions/getall"
+  );
   const qustions = await rquestions.json();
   return {
     props: {

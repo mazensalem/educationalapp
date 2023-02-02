@@ -21,10 +21,13 @@ export default async function handler(req, res) {
       let record = da[i];
       for (let j = 0; j < record.questions.length; j++) {
         let question = record.questions[j];
-        const rdata = await fetch("http://localhost:3000/api/questions/get", {
-          method: "POST",
-          body: JSON.stringify(question),
-        });
+        const rdata = await fetch(
+          process.env.NEXTAUTH_URL + "/api/questions/get",
+          {
+            method: "POST",
+            body: JSON.stringify(question),
+          }
+        );
         da[i].questions[j] = await rdata.json();
       }
     }

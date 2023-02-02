@@ -269,7 +269,7 @@ export default function Exam({ exam }) {
   );
 }
 export async function getServerSideProps(context) {
-  const rexam = await fetch("http://localhost:3000/api/exams/get", {
+  const rexam = await fetch(process.env.NEXTAUTH_URL + "/api/exams/get", {
     body: context.params.examid,
     method: "POST",
   });

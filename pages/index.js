@@ -30,14 +30,16 @@ export default function Home({ classses }) {
   );
 }
 export async function getServerSideProps(context) {
-  const session = await getSession({ req: context.req });
-  const rclasses = await fetch("http://localhost:3000/api/users/getclass", {
-    body: JSON.stringify(session),
-    method: "POST",
-  });
-  const classses = await rclasses.json();
-
   console.log(session);
+  const session = await getSession({ req: context.req });
+  const rclasses = await fetch(
+    process.env.NEXTAUTH_URL + "/api/users/getclass",
+    {
+      body: JSON.stringify(session),
+      method: "POST",
+    }
+  );
+  const classses = await rclasses.json();
 
   return {
     props: {

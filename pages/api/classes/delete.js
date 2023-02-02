@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   for (let postid of cls.posts) {
-    await fetch("http://localhost:3000/api/posts/delete", {
+    await fetch(process.env.NEXTAUTH_URL + "/api/posts/delete", {
       method: "POST",
       body: JSON.stringify({ postid, classid: req.body, session }),
     });

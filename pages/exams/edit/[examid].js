@@ -352,7 +352,7 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const exam = await fetch("http://localhost:3000/api/exams/get", {
+  const exam = await fetch(process.env.NEXTAUTH_URL + "/api/exams/get", {
     method: "POST",
     body: context.params.examid,
   });

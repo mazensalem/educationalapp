@@ -177,7 +177,7 @@ export default function Editquestions({ question }) {
 }
 
 export async function getServerSideProps(context) {
-  const d = await fetch("http://localhost:3000/api/questions/get", {
+  const d = await fetch(process.env.NEXTAUTH_URL + "/api/questions/get", {
     method: "POST",
     body: JSON.stringify(context.params.questionid),
   });
@@ -191,7 +191,7 @@ export async function getServerSideProps(context) {
   }
   for (let j = 0; j < q.questions.length; j++) {
     let question = q.questions[j];
-    const rdata = await fetch("http://localhost:3000/api/questions/get", {
+    const rdata = await fetch(process.env.NEXTAUTH_URL + "/api/questions/get", {
       method: "POST",
       body: JSON.stringify(question),
     });

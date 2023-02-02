@@ -613,7 +613,7 @@ export default function Class({
 
 export async function getServerSideProps(context) {
   const rid = context.params.classid;
-  const rsclass = await fetch("http://localhost:3000/api/classes/get", {
+  const rsclass = await fetch(process.env.NEXTAUTH_URL + "/api/classes/get", {
     method: "POST",
     body: rid,
   });
@@ -636,7 +636,7 @@ export async function getServerSideProps(context) {
   let accepted = [];
   let denyed = [];
   for (let user of sclass.sclass.inrev) {
-    const rduser = await fetch("http://localhost:3000/api/users/get", {
+    const rduser = await fetch(process.env.NEXTAUTH_URL + "/api/users/get", {
       method: "POST",
       body: user,
     });
@@ -644,7 +644,7 @@ export async function getServerSideProps(context) {
     inrevusers.push(duser);
   }
   for (let user of sclass.sclass.accepted) {
-    const rduser = await fetch("http://localhost:3000/api/users/get", {
+    const rduser = await fetch(process.env.NEXTAUTH_URL + "/api/users/get", {
       method: "POST",
       body: user,
     });
@@ -652,7 +652,7 @@ export async function getServerSideProps(context) {
     accepted.push(duser);
   }
   for (let user of sclass.sclass.dienyed) {
-    const rduser = await fetch("http://localhost:3000/api/users/get", {
+    const rduser = await fetch(process.env.NEXTAUTH_URL + "/api/users/get", {
       method: "POST",
       body: user,
     });
@@ -662,7 +662,7 @@ export async function getServerSideProps(context) {
 
   let posts = [];
   for (let postid of sclass.sclass.posts) {
-    const rpost = await fetch("http://localhost:3000/api/posts/get", {
+    const rpost = await fetch(process.env.NEXTAUTH_URL + "/api/posts/get", {
       method: "POST",
       body: postid,
     });
@@ -676,10 +676,13 @@ export async function getServerSideProps(context) {
       for (let vote of post.vote) {
         votes[post._id][vote.title] = [];
         for (let user of vote.count) {
-          const ruser = await fetch("http://localhost:3000/api/users/get", {
-            method: "POST",
-            body: user,
-          });
+          const ruser = await fetch(
+            process.env.NEXTAUTH_URL + "/api/users/get",
+            {
+              method: "POST",
+              body: user,
+            }
+          );
           const u = await ruser.json();
 
           votes[post._id][vote.title].push(u.name);
@@ -688,14 +691,17 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const rtests = await fetch("http://localhost:3000/api/classes/gettests", {
-    method: "POST",
-    body: rid,
-  });
+  const rtests = await fetch(
+    process.env.NEXTAUTH_URL + "/api/classes/gettests",
+    {
+      method: "POST",
+      body: rid,
+    }
+  );
   const tests = await rtests.json();
 
   const rmassages = await fetch(
-    "http://localhost:3000/api/classes/getmassages",
+    process.env.NEXTAUTH_URL + "/api/classes/getmassages",
     {
       method: "POST",
       body: rid,
