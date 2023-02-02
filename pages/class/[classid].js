@@ -95,8 +95,9 @@ export default function Class({
               >
                 <div>
                   <h2>in review</h2>
-                  {inrevusers.map((e) => (
+                  {inrevusers.map((e, i) => (
                     <div
+                      key={i}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -157,8 +158,9 @@ export default function Class({
               >
                 <div>
                   <h2>accepted</h2>
-                  {accepted.map((e) => (
+                  {accepted.map((e, i) => (
                     <div
+                      key={i}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -202,8 +204,9 @@ export default function Class({
               >
                 <div>
                   <h2>dienyed</h2>
-                  {denyed.map((e) => (
+                  {denyed.map((e, i) => (
                     <div
+                      key={i}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -280,7 +283,7 @@ export default function Class({
         {posts.map((post, i) => {
           if (post) {
             return (
-              <>
+              <div key={i}>
                 {data.user.admin && (
                   <>
                     {loading ? (
@@ -330,9 +333,9 @@ export default function Class({
                   )}
                   <div className="card-body">
                     <ul class="list-group list-group-flush">
-                      {post.vote.map((e) => {
+                      {post.vote.map((e, i) => {
                         return (
-                          <>
+                          <div key={i}>
                             {loading ? (
                               <Spinner variant="border" />
                             ) : (
@@ -371,20 +374,20 @@ export default function Class({
                                 {data.user.admin && (
                                   <div>
                                     {votes[post._id][e.title] &&
-                                      votes[post._id][e.title].map((f) => (
-                                        <span>{f}</span>
+                                      votes[post._id][e.title].map((f, i) => (
+                                        <span key={i}>{f}</span>
                                       ))}
                                   </div>
                                 )}
                               </li>
                             )}
-                          </>
+                          </div>
                         );
                       })}
                     </ul>
                   </div>
                 </div>
-              </>
+              </div>
             );
           }
         })}
@@ -423,6 +426,7 @@ export default function Class({
             <div>
               {titles.slice(0, length - 1).map((title, i) => (
                 <input
+                  key={i}
                   value={title}
                   onChange={(e) => {
                     let ntitles = titles;
@@ -528,8 +532,9 @@ export default function Class({
       <div>
         EXAMS
         <ul class="list-group list-group" style={{ width: "25rem" }}>
-          {tests.map((test) => (
+          {tests.map((test, i) => (
             <li
+              key={i}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -573,10 +578,10 @@ export default function Class({
       MASSAGES
       {data.user.admin ? (
         <div>
-          {massages.map((massage) => (
-            <>
+          {massages.map((massage, i) => (
+            <div key={i}>
               {massage.from} send {massage.content}
-            </>
+            </div>
           ))}
         </div>
       ) : (

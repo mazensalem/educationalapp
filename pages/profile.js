@@ -269,8 +269,8 @@ export default function Profile({ classses, qustions }) {
               <ListGroup.Item>
                 <a href="/addquestionp">Addp</a>
               </ListGroup.Item>
-              {qustions.map((question) => (
-                <>
+              {qustions.map((question, i) => (
+                <div key={i}>
                   {question.passage ? (
                     <ListGroup.Item
                       style={{
@@ -348,7 +348,7 @@ export default function Profile({ classses, qustions }) {
                       )}
                     </ListGroup.Item>
                   )}
-                </>
+                </div>
               ))}
             </ListGroup>
           )}
@@ -357,7 +357,7 @@ export default function Profile({ classses, qustions }) {
         <div>
           <ListGroup style={{ width: "18rem", marginTop: "1rem" }}>
             {data.user.exams.map((exam, i) => (
-              <ListGroup.Item>
+              <ListGroup.Item key={i}>
                 <a
                   style={{ textDecoration: "none", color: "black" }}
                   href={"exams/review/" + exam.examid}

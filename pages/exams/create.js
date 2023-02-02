@@ -172,9 +172,9 @@ export default function Create({ classid }) {
               Add All
             </Button>
             <br />
-            {searchresults.map((e) =>
+            {searchresults.map((e, i) =>
               e.passage ? (
-                <>
+                <div key={i}>
                   <Button
                     variant="outline-success"
                     onClick={() => {
@@ -192,14 +192,15 @@ export default function Create({ classid }) {
                   </Button>
                   <div>{e.data}</div>
                   <br />
-                  {e.questions.map((question) => (
-                    <div>
+                  {e.questions.map((question, i) => (
+                    <div key={i}>
                       {question.title}
                       <br />
                       marks: {question.points}
                       <br />
-                      {question.answers.map((e) => (
+                      {question.answers.map((e, i) => (
                         <span
+                          key={i}
                           style={
                             e.istrue
                               ? { background: "green" }
@@ -212,10 +213,10 @@ export default function Create({ classid }) {
                       ))}
                     </div>
                   ))}
-                </>
+                </div>
               ) : (
                 <>
-                  <div>
+                  <div key={i}>
                     <Button
                       variant="outline-success"
                       onClick={() => {
@@ -232,8 +233,9 @@ export default function Create({ classid }) {
                     <br />
                     marks: {e.points}
                     <br />
-                    {e.answers.map((e) => (
+                    {e.answers.map((e, i) => (
                       <span
+                        key={i}
                         style={
                           e.istrue
                             ? { background: "green" }
@@ -246,11 +248,11 @@ export default function Create({ classid }) {
                     ))}
                     <br />
                     {e.tags.map(
-                      (e) =>
+                      (e, i) =>
                         e != "none" && (
-                          <>
+                          <div key={i}>
                             {e} {"\t"}{" "}
-                          </>
+                          </div>
                         )
                     )}
                   </div>
@@ -274,10 +276,10 @@ export default function Create({ classid }) {
             clear
           </Button>
           <br />
-          {questions.map((question) => {
+          {questions.map((question, i) => {
             if (question.passage) {
               return (
-                <>
+                <div key={i}>
                   <Button
                     variant="outline-danger"
                     onClick={() => {
@@ -294,7 +296,7 @@ export default function Create({ classid }) {
                   {question.data}
                   {question.questions.length}
                   <br />
-                </>
+                </div>
               );
             } else {
               return (

@@ -171,10 +171,11 @@ export default function Create({ exam }) {
             >
               Add All
             </Button>
-            {searchresults.map((e) =>
+            {searchresults.map((e, i) =>
               e.passage ? (
                 <>
                   <Button
+                    key={i}
                     variant="outline-success"
                     onClick={() => {
                       if (!questions.map((a) => a._id).includes(e._id)) {
@@ -191,14 +192,15 @@ export default function Create({ exam }) {
                   </Button>
                   <div>{e.data}</div>
                   <br />
-                  {e.questions.map((question) => (
-                    <div>
+                  {e.questions.map((question, i) => (
+                    <div key={i}>
                       {question.title}
                       <br />
                       marks: {question.points}
                       <br />
-                      {question.answers.map((e) => (
+                      {question.answers.map((e, i) => (
                         <span
+                          key={i}
                           style={
                             e.istrue
                               ? { background: "green" }
@@ -231,8 +233,9 @@ export default function Create({ exam }) {
                     <br />
                     marks: {e.points}
                     <br />
-                    {e.answers.map((e) => (
+                    {e.answers.map((e, i) => (
                       <span
+                        key={i}
                         style={
                           e.istrue
                             ? { background: "green" }
@@ -244,7 +247,9 @@ export default function Create({ exam }) {
                       </span>
                     ))}
                     <br />
-                    {e.tags.map((e) => e != "none" && <>{e} </>)}
+                    {e.tags.map(
+                      (e, i) => e != "none" && <div key={i}>{e} </div>
+                    )}
                   </div>
                 </>
               )
@@ -266,11 +271,12 @@ export default function Create({ exam }) {
             clear
           </Button>
           <br />
-          {questions.map((question) => {
+          {questions.map((question, i) => {
             if (question.passage) {
               return (
                 <>
                   <Button
+                    key={i}
                     variant="outline-danger"
                     onClick={() => {
                       setquestions(questions.filter((e) => e != question));
@@ -290,7 +296,7 @@ export default function Create({ exam }) {
               );
             } else {
               return (
-                <>
+                <div key={i}>
                   <Button
                     variant="outline-danger"
                     onClick={() => {
@@ -302,7 +308,7 @@ export default function Create({ exam }) {
                   </Button>
                   {question.title} {question.points}
                   <br />
-                </>
+                </div>
               );
             }
           })}

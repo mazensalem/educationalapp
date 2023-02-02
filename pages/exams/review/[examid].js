@@ -11,20 +11,21 @@ export default function Examrev({ examid }) {
     <div>
       you got: {exam.mypoints}
       <br />
-      {exam.questions.map((question) => (
-        <>
+      {exam.questions.map((question, i) => (
+        <div key={i}>
           {question.passage ? (
             <>
               {question.data}
               <br />
-              {question.questions.map((nquestion) => (
-                <div>
+              {question.questions.map((nquestion, i) => (
+                <div key={i}>
                   {nquestion.title}
                   <br />
                   marks: {nquestion.points}
                   <br />
-                  {nquestion.answers.map((e) => (
+                  {nquestion.answers.map((e, i) => (
                     <span
+                      key={i}
                       style={
                         e.istrue
                           ? { background: "green" }
@@ -44,8 +45,9 @@ export default function Examrev({ examid }) {
               <br />
               {question.points}
               <br />
-              {question.answers.map((answer) => (
+              {question.answers.map((answer, i) => (
                 <div
+                  key={i}
                   style={{ backgroundColor: answer.istrue ? "green" : "red" }}
                 >
                   {answer.text}
@@ -57,7 +59,7 @@ export default function Examrev({ examid }) {
               <br />
             </>
           )}
-        </>
+        </div>
       ))}
     </div>
   );
