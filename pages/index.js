@@ -37,6 +37,8 @@ export async function getServerSideProps(context) {
   });
   const classses = await rclasses.json();
 
+  console.log(session);
+
   return {
     props: {
       classses: classses.classes,
