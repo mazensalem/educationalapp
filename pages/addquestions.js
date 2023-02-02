@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { Button, Spinner } from "react-bootstrap";
 
-export default function addquestions() {
+export default function Addquestions() {
   const [questionstitle, setquestiontitle] = useState("");
   const [questionschos, setquestionchos] = useState([
     { text: "", istrue: false },

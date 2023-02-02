@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { Button, Spinner } from "react-bootstrap";
 
-export default function addquestions() {
+export default function Addquestions() {
   const [passage, setpassage] = useState("");
   const [questions, setquestions] = useState([
     {

@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { Button, Spinner } from "react-bootstrap";
 
-export default function create({ exam }) {
+export default function Create({ exam }) {
   const [startdate, setstartdate] = useState(exam.startdate);
   const [enddate, setenddate] = useState(exam.enddate);
   const [duration, setduration] = useState(exam.duration);

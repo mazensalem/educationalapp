@@ -4,7 +4,7 @@ import { Alert, Button, Card, ListGroup, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function profile({ classses, qustions }) {
+export default function Profile({ classses, qustions }) {
   const { data } = useSession();
   const [code, setcode] = useState();
   const [name, setname] = useState("");

@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { Button, Spinner } from "react-bootstrap";
 
-export default function editquestions({ question }) {
+export default function Editquestions({ question }) {
   const [passage, setpassage] = useState(question.data);
   const [questions, setquestions] = useState([
     ...question.questions.map((e) => {

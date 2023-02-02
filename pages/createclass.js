@@ -3,7 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { Button, Spinner } from "react-bootstrap";
 
-export default function createclass() {
+export default function Createclass() {
   const [name, setname] = useState("");
   const { data } = useSession();
   const [isloading, setisloading] = useState(false);
