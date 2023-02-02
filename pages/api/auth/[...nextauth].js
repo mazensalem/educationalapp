@@ -20,7 +20,7 @@ export default NextAuth({
           id: profile.email,
           name: profile.name,
           email: profile.email,
-          image: profile.image,
+          image: profile.picture,
           emailVerified: profile.emailVerified,
           admin: false,
           classcode: [],
