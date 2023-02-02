@@ -4,9 +4,10 @@ import { Card } from "react-bootstrap";
 export default function Home({ classses }) {
   return (
     <div className="d-flex flex-wrap">
-      {classses.map((clas) => (
+      {classses.map((clas, i) => (
         <>
           <Card
+            key={i}
             style={{
               width: "18rem",
               marginTop: "1rem",
@@ -30,10 +31,9 @@ export default function Home({ classses }) {
   );
 }
 export async function getServerSideProps(context) {
-  console.log(process.env.NEXTAUTH_URL);
   const session = await getSession({ req: context.req });
   const rclasses = await fetch(
-    process.env.NEXTAUTH_URL + "/api/users/getclass",
+    "https://educationalapp.vercel.app/api/users/getclass",
     {
       body: JSON.stringify(session),
       method: "POST",

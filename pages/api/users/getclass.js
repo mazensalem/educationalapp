@@ -6,6 +6,10 @@ export default async function handler(req, res) {
   const db = await connection.db();
   const ccoll = await db.collection("classes");
   let classes = await ccoll.find().toArray();
+  if (!session) {
+    res.json({ classes: [] });
+    return;
+  }
   if (!session.user.admin) {
     classes = classes.filter((e) => {
       if (e.inrev.includes(session.user.id)) {
