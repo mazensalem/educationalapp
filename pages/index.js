@@ -30,7 +30,7 @@ export default function Home({ classses }) {
   );
 }
 export async function getServerSideProps(context) {
-  console.log(session);
+  console.log(process.env.NEXTAUTH_URL);
   const session = await getSession({ req: context.req });
   const rclasses = await fetch(
     process.env.NEXTAUTH_URL + "/api/users/getclass",
