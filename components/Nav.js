@@ -17,7 +17,7 @@ export default function Nav() {
             className="d-inline-block align-top"
             alt="logo"
           />
-          {"أ لمياء خميس"}
+          LOGO
         </Navbar.Brand>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text>
