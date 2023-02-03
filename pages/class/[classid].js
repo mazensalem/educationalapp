@@ -36,7 +36,7 @@ export default function Class({
         <>
           <div
             style={{
-              width: "40rem",
+              maxWidth: "40rem",
               border: "1px solid gainsboro",
               borderRadius: "3px",
               margin: "1rem",
