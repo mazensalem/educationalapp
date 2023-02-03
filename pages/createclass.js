@@ -26,7 +26,7 @@ export default function Createclass() {
             setisloading(true);
             await fetch("/api/classes/create", { method: "POST", body: name });
             setisloading(false);
-            window.location.href = "http://localhost:3000/profile";
+            window.location.href = "https://educationalapp.vercel.app/profile";
           }}
         >
           send
